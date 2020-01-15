@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-nav">
+		<span class="layui-breadcrumb"> <a href="index.html">首页</a> <a href="">管理员</a>
+			<a> <cite>专家列表</cite></a>
+		</span> <a class="layui-btn layui-btn-small"
+                   style="line-height: 1.6em; margin-top: 3px; float: right"
+                   onclick="location.reload()" title="刷新"> <i
+        class="layui-icon layui-icon-refresh" style="line-height: 30px"></i>
+</a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="姓名"
+                                   name="professorName" id="professorName">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="手机号"
+                                   name="mobliePhone" id="mobliePhone">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input" autocomplete="off" placeholder="身份证号"
+                                   name="identityNumber" id="identityNumber">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit lay-filter="sreach">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-body ">
+                    <table class="layui-table" width="100%"
+                           lay-data="{url:'professorSearch.jhtml',page:true,toolbar: '#toolbarDemo',id:'queryTable'}"
+                           lay-filter="queryTable">
+                        <thead>
+                        <tr>
+                            <th lay-data="{type:'checkbox'}">ID</th>
+                            <th lay-data="{field:'id', width:80, sort: true}">编号</th>
+                            <th lay-data="{field:'professorName', width:120, sort: true }">姓名</th>
+                            <th lay-data="{field:'gender', width:120, sort: true }">性别</th>
+                            <th lay-data="{field:'birthday',  minWidth: 150,templet:function(d){
+                               return layui.util.toDateString(d.birthday, 'yyyy-MM-dd');
+                            }}">生日
+                            </th>
+                            <th lay-data="{field:'address',  minWidth: 100}">地址</th>
+                            <th lay-data="{field:'identityNumber',  minWidth: 100}">身份证号</th>
+                            <th lay-data="{field:'institution', sort: true, }">毕业院校</th>
+                            <th lay-data="{field:'education', sort: true }">学历</th>
+                            <th lay-data="{field:'mobliePhone', sort: true}">手机号</th>
+                            <th lay-data="{templet: '#newsListBar', minWidth: 460,fixed:'right'}">操作</th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addProfessor">
+            <i class="layui-icon">&#xe654;</i>添加专家
+        </button>
+        <button class="layui-btn layui-btn-sm" lay-event="delBatch"> 批量删除</button>
+        <!--
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button >
+        <button class = "layui-btn layui-btn-sm" lay-event = "isAll" > 验证是否全选</button>
+        -->
+    </div>
+</script>
+<!--操作-->
+<script type="text/html" id="newsListBar">
+    <a class="layui-btn layui-btn-xs" id="edit" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" id="del" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs layui-btn-primary" id="look" lay-event="look">详情</a>
+    <a class="layui-btn layui-btn-xs layui-btn-primary" id="workhistory" lay-event="workhistory">工作历史</a>
+    <a class="layui-btn layui-btn-xs layui-btn-primary" id="enrollProj" lay-event="enrollProj">参与项目</a>
+    <a class="layui-btn layui-btn-xs layui-btn-primary" id="exportToWord" target="_blank" lay-event="exportToWord">导出为word</a>
+</script>
+<script>
+    layui.use(['table', 'form', 'layer'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        //查询
+        form.on("submit(sreach)", function (data) {
+            table.reload("queryTable", {
+                page: {curr: 1},
+                where: {
+                    professorName: $("input[name=professorName]").val(), //搜索的关键字
+                    mobliePhone: $("input[name=mobliePhone]").val(),
+                    identityNumber: $("input[name=identityNumber]").val()
+                }
+            });
+            return false;
+        });
+
+        //监听单元行
+        table.on('tool(queryTable)', function (obj) {
+            var layEvent = obj.event;
+            var data = obj.data;
+            switch (layEvent) {
+                case "edit": {
+                    var id = data.id;
+                    xadmin.open('修改用户', './professor-edit.html?' + id, 800, 600);
+                    break;
+                }
+                case "del": {
+                    del(data);
+                    break;
+                }
+                case "look": {
+                    var id = data.id;
+                    xadmin.open("详细信息", 'professor-look.html?'+id,600,400,true);
+                    break;
+                }
+                case "workhistory": {
+                    var id = data.id;
+                    xadmin.open("工作历史",'professor-look.html?'+id,600,400,true);
+                    break;
+                }
+                case "enrollProj": {
+                    var id = data.id;
+                    xadmin.open("参与项目",'professor-look.html?'+id,600,400,true);
+                    break;
+                }
+                case "exportToWord": {
+                    $(this).attr("href", "exportProToWord.do?id=" + data.id);
+                    break;
+                }
+            }
+            event.stopPropagation();
+        });
+
+        //监听单元格编辑，useless
+        table.on('edit(queryTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
+        });
+
+        //单个删除
+        function del(data) {
+            layer.confirm('确定删除选中的用户？', {icon: 3, title: '提示信息'}, function (index) {
+                $.post("professorDel.jhtml", {id: data.id}, function (res) {
+                    if (res.code === 200) {
+                        parent.layer.alert(res.msg, {icon: 6},function(){
+                            xadmin.close();
+                            xadmin.father_reload();
+                        });
+                    }else {
+                        layer.msg(res.msg);
+                    }
+                });
+            })
+        }
+
+        //批量删除
+        function deleteAll(data) {
+            if (data.length == 0) {
+                return;
+            }
+            var ids = [];
+            for (var i in data) {
+                ids.push(data[i].id);
+            }
+            layer.confirm('确定删除选中的用户？', {
+                icon: 3,
+                title: '提示信息'
+            }, function (index) {
+                $.get("batchDelProfessor.jhtml", {idArr: ids}, function (d) {
+                    if (d.code === 200) {
+                        layer.alert(d.msg);
+                        location.reload();
+                    }
+                });
+            })
+        }
+
+        //头工具栏事件
+        table.on('toolbar(queryTable)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'addProfessor': {
+                    xadmin.open('添加专家', './professor-add.html', 600, 400, true);
+                    break;
+                }
+                case 'delBatch': {
+                    var data = checkStatus.data;
+                    deleteAll(data);
+                    break;
+                }
+            }
+        });
+    });
+</script>
+</html>

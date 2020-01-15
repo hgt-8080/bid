@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="./lib/layui/layui.js"
+            charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="userName" class="layui-form-label"> <span
+                        class="x-red">*</span>登录名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="userName" name="userName" lay-verify="userName"
+                           required="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>将会成为您唯一的登入名
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="name" class="layui-form-label">真实姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="name" name="name"
+                           lay-verify="name" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="password" class="layui-form-label"> <span
+                        class="x-red">*</span>密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="password" name="password" required=""
+                           lay-verify="password" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">2到16个字符</div>
+            </div>
+            <div class="layui-form-item">
+                <label for="repass" class="layui-form-label"> <span
+                        class="x-red">*</span>确认密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="password" id="repass" name="repass" required=""
+                           lay-verify="repass" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="telephone" class="layui-form-label"> <span
+                        class="x-red"></span>手机号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="telephone" id="telephone" name="telephone"
+                           lay-verify="telephone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="unit" class="layui-form-label"> <span
+                        class="x-red"></span>所属单位
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="unit" name="unit"
+                           lay-verify="unit" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="landMark" class="layui-form-label"> <span
+                        class="x-red"></span>坐标
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="landMark" name="landMark"
+                           lay-verify="landMark" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="enterdate" class="layui-form-label"> <span
+                        class="x-red"></span>入职日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="enterdate" name="enterdate"
+                           lay-verify="enterdate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="role" class="layui-form-label"> <span
+                        class="x-red">*</span>角色
+                </label>
+                <div class="layui-input-inline">
+                    <select id="role" name="role"
+                            lay-verify="role" class="layui-input">
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>layui.use(['form', 'laydate', 'layer', 'jquery'],
+    function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#enterdate' //指定元素
+            , trigger: 'click'
+        });
+        var $role = $("#role");
+        $.get("findRoles.jhtml", function (data) {
+            if (data.code === 200) {
+                $.each(data.data, function (i, d) {
+                    $role.append(new Option(d.name, d.id));
+                });
+                form.render();//重绘表单
+            } else {
+                layer.msg(data.msg);
+            }
+        });
+        //自定义验证规则
+        form.verify({
+            userName: function (value) {
+                $.ajaxSettings.async = false;//让ajax执行同步
+                //也可以如下的用法
+                //$.ajax({
+                //	url:"checkUserNameRepeat.do",
+                //	data:{}
+                // sync:false
+                //});
+                var rtn = null;
+                $.post("checkUserNameRepeat.jhtml", {userName: value}, function (data) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.code === 200)
+                        rtn = "登录名重复";
+                });
+                $.ajaxSettings.async = true;
+                return rtn;
+            },
+            name: function (value) {
+                if (value.length < 2 || value.length > 12) {
+                    return '用户名必须是2-12个字符';
+                }
+            },
+            password: [/(.+){6,12}$/, '密码必须6到12位'],
+            repass: function (value) {
+                if ($('#password').val() != value) {
+                    return '两次密码不一致';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+                //发异步，把数据提交给
+                $.post("userAdd.jhtml", data.field, function (r) {
+                    if (r.code === 200) {
+                        //1.5秒后自动关闭
+                        parent.layer.msg(r.msg, {
+                            icon: 6, time: 1500
+                        }, function (index, item) {
+                            xadmin.close();
+                            // 可以对父窗口进行刷新
+                            xadmin.father_reload();
+                        });
+
+                    } else {
+                        parent.layer.alert(r.msg, {
+                            icon: 1
+                        });
+                    }
+                });
+
+                return false;
+            });
+
+    });
+</script>
+
+</body>
+
+</html>    

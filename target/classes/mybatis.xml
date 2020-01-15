@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="jdbc.properties"></properties>
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+	</settings>
+	<typeAliases>
+		<!-- 类型别名 -->
+		<package name="cn.bx.bid.entity" />
+	</typeAliases>
+	<environments default="dev">
+		<environment id="dev">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url"
+					value="${url}" />
+				<property name="username" value="${user}" />
+				<property name="password" value="${pass}" />
+			</dataSource>
+		</environment>
+		<environment id="test">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url"
+					value="jdbc:mysql://192.222:3306/bid?useSSL=false" />
+				<property name="username" value="root" />
+				<property name="password" value="root" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="cn/bx/bid/dao/user.xml" />
+		<mapper resource="cn/bx/bid/dao/role.xml" />
+		<mapper resource="cn/bx/bid/dao/professor.xml" />
+		<mapper resource="cn/bx/bid/dao/project.xml" />
+	</mappers>
+</configuration>

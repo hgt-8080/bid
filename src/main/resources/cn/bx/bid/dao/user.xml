@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bx.bid.dao.UserDao">
+	<!-- <select id="findALL" resultType="User">
+		select * from user
+	</select> -->
+	<!--<resultMap type="User" id="User1">
+		<id column="id" property="id"/>
+		<association property="r" column="role" select="getRole"></association>
+	</resultMap>-->
+
+	<select id="login" resultType="User">
+		select * from user
+		where username=#{userName} and password=md5(#{pass})
+	</select>
+
+	<select id="checkUserNameRepeat" resultType="int">
+		select count(id) from user
+		where username=#{userName}
+		<if test="id!=null and id>0">
+			and id!=#{id}
+		</if>
+	</select>
+
+	<select id="getRole" resultType="Userrole">
+		select * from userrole where id=#{0}
+	</select>
+
+	<sql id="userC" >
+	<where>
+		  <if test="name!=null and name!='' ">
+		   and u.name like concat('%',#{name},'%')
+		  </if>
+		  <if test="start!=null ">
+		   and u.enterdate&gt;=#{start}
+		  </if>
+		 <if test="end!=null ">
+		   and u.enterdate&lt;=#{end}
+		  </if>
+		</where>
+	</sql>
+
+	<select id="search" resultType="User">
+	<bind name="startLine" value="(pageNo-1)*pageSize"/>
+		select u.*,r.name as roleName from user u inner join userrole r on(r.id=u.role)
+		<include refid="userC"></include>
+		order by u.id
+		limit #{startLine},#{pageSize}
+	</select>
+
+	<select id="searchTotal" resultType="int">
+		select count(*) from user u
+		<include refid="userC"></include>
+	</select>
+
+    <!-- 根据id获得对象 -->
+	<select id="get" parameterType="long" resultType="User">
+		select u.*,r.name as roleName from user u inner join userrole r on(r.id=u.role) where u.id = #{id}
+	</select>
+
+	<insert id="add" parameterType="User">
+		insert into user(
+		role,userName,
+		password, name, telephone, unit, landMark,
+		enterdate)values(
+		#{role},#{userName}, md5(#{password}), #{name},
+		#{telephone},
+		#{unit},
+		#{landMark},#{enterdate,jdbcType=DATE})
+	</insert>
+
+	<update id="update" parameterType="User">
+		update user
+		<set>
+			<if test="role!=null and role >0 ">
+				role=#{role} ,
+			</if>
+			<if test="userName!=null and userName!=''">
+				userName=#{userName} ,
+			</if>
+			<if test="password!=null and password!=''">
+				password=md5(#{password}) ,
+			</if>
+			<if test="name!=null and name!=''">
+				name=#{name} ,
+			</if>
+			<if test="telephone!=null and telephone!=''">
+				telephone=#{telephone} ,
+			</if>
+			<if test="unit!=null and unit!=''">
+				unit=#{unit} ,
+			</if>
+			<if test="landMark!=null and landMark!=''">
+				landmark=#{landMark} ,
+			</if>
+			<if test="enterdate!=null">
+				enterdate=#{enterdate,jdbcType=DATE}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="del" parameterType="long">
+		delete from user where id=#{id}
+	</delete>
+
+	<delete id="batchDel">
+		delete from user where id in
+		<foreach collection="ids" item="d" open="(" close=")"
+			separator=",">
+			#{d}
+		</foreach>
+	</delete>
+
+	<!-- <select id="find" resultType="User">
+		select * from user where
+		<choose>
+			<when test="sex==1">
+				sex='男'
+			</when>
+			<when test="sex==2">
+				sex='女'
+			</when>
+			<otherwise>
+				sex='妖'
+			</otherwise>
+		</choose>
+	</select> -->
+</mapper>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bx.bid.dao.ProfessorDao">
+    <!-- 根据id获得对象 -->
+    <select id="get" resultMap="Professor">
+        select * from bid_professor p where p.id=#{0}
+    </select>
+    <resultMap id="Professor" type="Professor">
+        <id property="id" column="id"/>
+        <collection property="workhistory" column="id" select="getHistory"></collection>
+    </resultMap>
+
+    <!-- 根据专家id获得历史记录 -->
+    <select id="getHistory" resultType="WorkHistory">
+        select * from bid_workhistory where professorid=#{0}
+    </select>
+
+    <!-- 模糊分页查询 -->
+    <select id="search" resultType="Professor">
+        <bind name="start" value="(pageNo-1)*pageSize"/>
+        select * from bid_professor
+        <include refid="sqlWhere"></include>
+        limit #{start},#{pageSize}
+    </select>
+    <sql id="sqlWhere">
+        <where>
+            <if test="professorName!=null and professorName!=''">
+                and professorName like concat('%',#{professorName},'%')
+            </if>
+            <if test="mobliePhone!=null and mobliePhone!=''">
+                and mobliePhone like concat('%',#{mobliePhone},'%')
+            </if>
+            <if test="identityNumber!=null and identityNumber!=''">
+                and identityNumber like concat('%',#{identityNumber},'%')
+            </if>
+        </where>
+    </sql>
+
+    <!-- 条件查询总数 -->
+    <select id="searchTotal" resultType="int">
+        select count(id) from bid_professor
+        <include refid="sqlWhere"></include>
+    </select>
+
+    <!-- 添加专家 -->
+    <insert id="addProfessor" parameterType="Professor">
+		insert into bid_professor(
+		professorName,gender,birthday,
+		identityNumber,workStatus, institution,
+		education,major,employCompany,administrative,
+		technicalPost,phone,mobliePhone,address,
+		projectCategory,createBy,createDate,
+		modifyBy,modifyDate,workDate)
+		values(
+		#{professorName},#{gender}, #{birthday},
+		#{identityNumber},#{workStatus},#{institution},
+		#{education},#{major},#{employCompany},
+		#{administrative},#{technicalPost},#{phone},
+		#{mobliePhone},#{address},#{projectCategory},
+		#{createBy},#{createDate},#{modifyBy},
+		#{modifyDate},#{workDate})
+	</insert>
+
+    <!-- 修改专家信息 -->
+    <update id="updateProfessor" parameterType="Professor">
+        update bid_professor
+        <set>
+            <if test="professorName!=null and professorName !=''">
+				professorName = #{professorName} ,
+			</if>
+            <if test="gender!=null and gender!=''">
+				gender=#{gender} ,
+			</if>
+            <if test="birthday!=null">
+				birthday=#{birthday} ,
+			</if>
+            <if test="identityNumber!=null and identityNumber!=''">
+				identityNumber=#{identityNumber} ,
+			</if>
+            <if test="workStatus!=null and workStatus!=''">
+				workStatus=#{workStatus} ,
+			</if>
+            <if test="institution!=null and institution!=''">
+				institution=#{institution} ,
+			</if>
+            <if test="education!=null and education!=''">
+				education=#{education} ,
+			</if>
+            <if test="major!=null and major != ''">
+				major=#{major},
+			</if>
+            <if test="employCompany!=null and employCompany != ''">
+				employCompany=#{employCompany},
+			</if>
+            <if test="administrative!=null and administrative != ''">
+				administrative=#{administrative},
+			</if>
+            <if test="technicalPost!=null and technicalPost != ''">
+				technicalPost=#{technicalPost},
+			</if>
+            <if test="phone!=null and phone != ''">
+				phone=#{phone},
+			</if>
+            <if test="mobliePhone!=null and mobliePhone != ''">
+				mobliePhone=#{mobliePhone},
+			</if>
+            <if test="address!=null and address != ''">
+				address=#{address},
+			</if>
+            <if test="projectCategory!=null and projectCategory != ''">
+				projectCategory=#{projectCategory},
+			</if>
+            <if test="createDate!=null">
+				createDate=#{createDate},
+			</if>
+            <if test="modifyBy!=null and modifyBy != ''">
+				modifyBy=#{modifyBy},
+			</if>
+            <if test="modifyDate!=null">
+				modifyDate=#{modifyDate},
+			</if>
+            <if test="workDate!=null and workDate > 0">
+				workDate=#{workDate},
+			</if>
+            <if test="lostNum!=null and lostNum >= 0">
+				lostNum=#{lostNum},
+			</if>
+            <if test="createBy!=null and createBy != ''">
+				createBy=#{createBy},
+			</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 根据专家号获得项目信息 -->
+    <select id="findpros" resultType="Project">
+	  select t.* from bid_randomname r LEFT JOIN bid_project t ON(r.projectId=t.id) where r.professorId=#{0}
+    </select>
+
+    <!-- 添加工作历史 -->
+    <insert id="addHistory" parameterType="WorkHistory">
+        insert into bid_workhistory(startdate,enddate,job,jobduty,employcompany,professorid)
+        values(#{startdate},#{enddate},#{job},#{jobduty},#{employcompany},#{professorid})
+    </insert>
+
+    <!-- 删除专家 -->
+    <delete id="delProfessor">
+        delete
+        from bid_professor
+        where id = #{id}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDel">
+        delete from bid_professor where id in
+        <foreach collection="ids" item="d" open="(" close=")"
+                 separator=",">
+            #{d}
+        </foreach>
+    </delete>
+
+    <!-- 删除指定专家的工作记录 -->
+    <delete id="delHis">
+        delete
+        from bid_workhistory
+        where id = #{hisid}
+          and professorid = #{pid}
+    </delete>
+
+    <!-- 根据工作记录id获得指定工作记录 -->
+    <select id="getWorkHistory" resultType="WorkHistory">
+        select * from bid_workhistory where id = #{id}
+    </select>
+
+    <!-- 修改工作记录 -->
+    <update id="updateHistory" parameterType="WorkHistory">
+        update bid_workhistory
+        <set>
+            <if test="startdate !=null">
+                startdate = #{startdate},
+            </if>
+            <if test="enddate != null">
+                enddate = #{enddate},
+            </if>
+            <if test="job != null and job != ''">
+                job = #{job},
+            </if>
+            <if test="jobduty != null and jobduty != ''">
+                jobduty = #{jobduty},
+            </if>
+            <if test="employcompany != null and employcompany != ''">
+                employcompany = #{employcompany}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新增专家</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js"
+            charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="projectName" class="layui-form-label"> <span
+                        class="x-red">*</span>工程名称
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="projectName" name="projectName" lay-verify="projectName"
+                           required="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="projectCategory" class="layui-form-label"> <span
+                        class="x-red">*</span>项目类型
+                </label>
+                <div class="layui-input-inline">
+                    <select name="projectCategory" id="projectCategory" class="projectCategory">
+                        <option value="水文水资源管理">水文水资源管理</option>
+                        <option value="水文工程">水文工程</option>
+                        <option value="水文信息化">水文信息化</option>
+                        <option value="综合保障服务">综合保障服务</option>
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="professorNum" class="layui-form-label"> <span
+                        class="x-red">*</span>专家数量
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="professorNum" name="professorNum" lay-verify="professorNum"
+                           required="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="isEvaluated" class="layui-form-label"> <span
+                        class="x-red">*</span>项目状态
+                </label>
+                <div class="layui-input-inline">
+                    <select name="isEvaluated" id="isEvaluated" class="isEvaluated" lay-filter="isEvaluated">
+                        <option value="待抽签">待抽签</option>
+                        <option value="随机抽签中">随机抽签中</option>
+                        <option value="补抽中">补抽中</option>
+                        <option value="待登记">待登记</option>
+                        <option value="登记成功">登记成功</option>
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="prochaseMode" class="layui-form-label">
+                    采购方式
+                </label>
+                <div class="layui-input-inline">
+                    <select name="prochaseMode" id="prochaseMode" class="prochaseMode">
+                        <option value="领导决定">领导决定</option>
+                        <option value="投票决定">投票决定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="departmentId" class="layui-form-label">
+                    部门名称
+                </label>
+                <div class="layui-input-inline">
+                    <select name="departmentId" id="departmentId" class="departmentId">
+                        <option value="1">省局</option>
+                        <option value="2">市局</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="budget" class="layui-form-label">
+                    预算
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="budget" name="budget"
+                           lay-verify="budget" autocomplete="off" class="layui-input">
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="announceDate" class="layui-form-label">
+                    公示日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="announceDate" name="announceDate"
+                           lay-verify="announceDate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="openDate" class="layui-form-label">
+                    开标日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="openDate" name="openDate"
+                           lay-verify="openDate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="address" class="layui-form-label">
+                    开标地点
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="address" name="address"
+                           lay-verify="address" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="deldate" class="layui-form-label">
+                    成交公告日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="deldate" name="deldate"
+                           lay-verify="deldate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="url" class="layui-form-label">
+                    成交发布网址
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="url" name="url"
+                           lay-verify="url" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="dealCompany" class="layui-form-label">
+                    成交单位
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="dealCompany" name="dealCompany"
+                           lay-verify="dealCompany" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label for="settlePrice" class="layui-form-label">
+                    成交价格
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="settlePrice" name="settlePrice"
+                           lay-verify="settlePrice" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="projectFilePath" class="layui-form-label">
+                    项目文件路径
+                </label>
+                <div class="layui-input-inline">
+                    <!--<button class="layui-btn test" id="fujian" name="fujian" lay-data="{url: 'addProject.jhtml', accept: 'file'}">-->
+                    <!--<i class="layui-icon">&#xe67c;</i>上传文件</button>-->
+                    <input type="file" accept="rar|zip|doc|docx|xls|xlsx" name="fujian"
+                           class="layui-input projectFilePath" lay-verify="projectFilePath" placeholder="项目文件路径"
+                           id="projectFilePath">
+
+                    </input>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="linkMan" class="layui-form-label">
+                    项目联系人姓名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="linkMan" name="linkMan"
+                           lay-verify="linkMan" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="mobliephone" class="layui-form-label">
+                    项目联系人电话
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="mobliephone" name="mobliePhone"
+                           lay-verify="phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="address" class="layui-form-label">
+                    创建者
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="createBy" name="createBy" placeholder="创建者"
+                           lay-verify="createBy" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="createDate" class="layui-form-label"> <span
+                        class="x-red"></span>创建日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="createDate" name="createDate"
+                           lay-verify="workdate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="department" class="layui-form-label"> <span
+                        class="x-red"></span>采购部门
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="department" name="department"
+                           lay-verify="department" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="updateDate" class="layui-form-label"> <span
+                        class="x-red"></span>修改日期
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="updateDate" name="updateDate"
+                           lay-verify="updateDate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="registerTime" class="layui-form-label"> <span
+                        class="x-red"></span>报道时间
+                </label>
+                <div class="layui-input-inline">
+                    <input type="date" id="registerTime" name="registerTime"
+                           lay-verify="updateDate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="registerAddress" class="layui-form-label"> <span
+                        class="x-red"></span>报道地点
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="registerAddress" name="registerAddress"
+                           lay-verify="registerAddress" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="committee" class="layui-form-label"> <span
+                        class="x-red"></span>评标委员会组成人数
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="committee" name="committee"
+                           lay-verify="committee" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="professional" class="layui-form-label"> <span
+                        class="x-red"></span>采购代表
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="professional" name="professional"
+                           lay-verify="professional" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="updateBy" class="layui-form-label">
+                    修改者
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="updateBy" name="updateBy"
+                           lay-verify="updateBy" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="professional" class="layui-form-label"> <span
+                        class="x-red"></span>采购代表
+                </label>
+                <div class="layui-input-inline">
+                    <select name="status" id="status" class="status" lay-filter="status">
+                        <option value="0">未完成</option>
+                        <option value="1">已完成</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'laydate', 'layer', 'jquery', 'code'],
+        function () {
+            var $ = layui.jquery;
+            form = layui.form;
+            var layer = layui.layer;
+            var laydate = layui.laydate;
+            form.on('submit(add)',
+                function (data) {
+                    console.log(data);
+                    $.post("addProject.jhtml", data.field, function (res) {
+                        console.log(res);
+                        if (res.code == 200) {
+                            layer.msg(res.msg, {icon: 6, time: 1500}, function () {
+                                xadmin.close();
+                                xadmin.father_reload();
+                            })
+                        } else {
+                            layer.msg(res.msg, {icon: 5, time: 1500}, function () {
+                                xadmin.close();
+                                xadmin.father_reload();
+                            })
+                        }
+                    });
+
+                    return false;
+                });
+        });
+</script>
+</body>
+</html>    

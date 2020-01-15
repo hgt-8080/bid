@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>抽取专家</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="./lib/layui/layui.js"
+            charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+    <!-- <form class="layui-form">-->
+            <div class="layui-form-item">
+                <label for="id" class="layui-form-label"> <span
+                        class="x-red"></span>编号
+                </label>
+                <div class="layui-input-inline">
+                    <input  id="id" name="id" readonly
+                           lay-verify="id" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="projectName" class="layui-form-label"> <span
+                        class="x-red"></span>项目名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="projectName" readonly name="projectName"
+                           lay-verify="projectName" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="projectCategory" class="layui-form-label"> <span
+                        class="x-red"></span>项目类型
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="projectCategory" readonly name="projectCategory"
+                          autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="budget" class="layui-form-label"> <span
+                        class="x-red"></span>预算(万元)
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="budget" readonly name="budget"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="professorNum" class="layui-form-label"> <span
+                        class="x-red"></span>评标人数
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="professorNum" readonly name="professorNum"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="category"  name="category"
+                       class="layui-input" placeholder="专家类型">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" id="distance"  name="distance"
+                       class="layui-input" placeholder="专家距离公里数">
+            </div>
+            <div class="layui-input-inline">
+                <button class="layui-btn layui-btn-sm" id="randomSelect" lay-event="randomSelect" type="button">随机抽选专家</button >
+             </div>
+        </div>
+        <div class="layui-form-item">
+            <h1>已选中专家</h1>
+        </div>
+            <div class="layui-card-body ">
+                <table class="layui-table" width="100%" height="50%"
+                       lay-data="{page:false,id:'queryTable'}"
+                       lay-filter="queryTable" id="queryTable">
+                    <thead>
+                    <tr>
+                        <!--<th lay-data="{type:'checkbox'}">序号</th>-->
+                        <th lay-data="{field:'id', width:80, sort: true,templet:function(data){return data.prof.id;}}">专家编号</th>
+                        <th lay-data="{field:'professorName', width:80, sort: true,templet:function(data){return data.prof.professorName;}}">专家姓名</th>
+                        <th lay-data="{field:'isNotice', width:40, sort: true ,templet:function(data){return data.rand.isNotice;}}">是否通知</th>
+                        <th lay-data="{field:'createdate',  minWidth: 120,templet:function(data){return layui.util.toDateString(data.rand.createdate,'yyyy-MM-dd HH:mm');}}">通知时间</th>
+                        <th lay-data="{field:'bePresent',  minWidth: 180,templet:function(data){return data.rand.bePresent==undefined?'':data.rand.bePresent;}}">是否出席</th>
+                        <th lay-data="{field:'replyTime',  minWidth: 180,templet:function(data){return layui.util.toDateString(data.rand.replyTime==null?'':data.rand.replyTime,'yyyy-MM-dd HH:mm');}}">回复时间</th>
+                        <th lay-data="{field:'reason', minWidth: 380,templet:function(data){return data.rand.reason==undefined?'':data.rand.reason;} }">不能出席原因</th>
+                        <th lay-data="{templet: '#newsListBar',minWidth:270,fixed:'right'}">操作</th>
+                    </thead>
+                </table>
+            </div>
+            <script type="text/html" id="newsListBar">
+                <a class="layui-btn layui-btn-xs" id="edit" lay-event="come">确定出席</a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger" id="del" lay-event="noCome">不能出席</a>
+            </script>
+
+            <div class="layui-form-item">
+                <label  class="layui-form-label"></label>
+                <label  class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="back" id="back">返回</button>
+            </div>
+        <!--</form>-->
+    </div>
+</div>
+<script>layui.use([ 'form', 'laydate','layer', 'jquery','table' ],
+    function() {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer,
+            laydate=layui.laydate,
+            table=layui.table;
+        var pid=window.location.search.substring(1);//window.location.hash:#后面的，包含#
+        var project=JSON.parse(window.sessionStorage.getItem("project"));
+        if(project==null){
+            history.back();
+            return;
+        }
+        $("#id").val(project.id);
+        $("#projectName").val(project.projectName);
+        $("#projectCategory").val(project.projectCategory);
+        $("#budget").val(project.budget);
+        $("#professorNum").val(project.professorNum);
+        //获得项目已经选中的专家
+        table.reload("queryTable",{
+            url:"searchProfessor.jhtml",
+            page:false,
+            method:'post',
+            where:{
+                id:pid
+            }
+        });
+
+        //抽选专家
+        $("#randomSelect").click(function (d) {
+            var showIndex= layer.msg('执行中...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false,offset: 'auto', time:100000});
+            $.post("randomSelect.jhtml",{pjid:project.id,category:$("#category").val()
+                ,distance:$("#distance").val()
+            },function(res){
+                layer.close(showIndex);
+                if(res.code == 200){
+                    //刷新
+                    layer.msg("选择成功:"+res.msg,{time:1100},function(dt){
+                        table.reload("queryTable",{
+                            url:"searchProfessor.jhtml",
+                            page:false,
+                            where:{
+                                projid:pid
+                            }
+                        });
+                    });
+                }else{
+                    layer.msg("选择失败，原因是：["+res.msg+"]");
+                }
+            });
+        });
+
+        //监听头部事件
+        table.on('toolbar(queryTable)', function(obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+           // alert(">>>>>>>>>>>>>>>>>>>>"+obj.event);
+            switch (obj.event) {
+                case 'addNewUser':
+                    /*//可以通过layer.data传递数据
+                   // alert(">>>>>>>>>>>>>>>>>>>>"+JSON.stringify(pro));
+                    layui.sessionData("professor",{key:'data',value:{'id':pro.id,'professorname':pro.professorname}});
+                    //xadmin.set_cate_data(pro);
+                    xadmin.open('添加工作记录', './history-add.html', 600, 400);
+                   /!* var index = layui.layer.open({
+                        title: '添加工作记录',
+                        type: 2,
+                        content: "history-add.html"
+                    });*!/*/
+                    break;
+            }
+            event.stopPropagation();
+            return false;
+        });
+        //监听表单back
+
+        //监听单元行
+        table.on('tool(queryTable)',function(obj){
+            var layEvent = obj.event;
+            var data=obj.data;
+            if(project.status==1){
+                layer.msg("项目已经结束，不能修改");
+                return;
+            }
+            if(layEvent=="edit"){
+                edit(data);
+            }else if(layEvent=="del"){
+                del(this,data);
+            }else if(layEvent=="come"){
+                come(data,obj);
+            }else if(layEvent=="noCome"){
+                notCome(data,obj);
+            }
+            event.stopPropagation();
+        });
+        function come(data,obj){
+            layer.confirm('确定'+data.prof.professorName+'能参加本次投标会议？', {
+                icon : 3,
+                title : '提示信息'
+            }, function(index) {
+                $.post("profRoleProject.jhtml", {projid:project.id,pfid:data.prof.id}, function(res) {
+                    if (res.code == 200) {
+                        layer.msg(res.msg,{time:300});
+                        table.reload("queryTable",{
+                            url:"searchProfessor.jhtml",
+                            page:false,
+                            where:{
+                                projid:pid
+                            }
+                        });
+                    } else {
+                        layer.alert(res.msg);
+                    }
+                });
+            })
+        }
+
+        function notCome(data,obj){
+            layer.prompt({formType:2,title:"不能参加原因",area: ['300px', '240px'],btn:['确认','关闭']
+            /* ,yes:function(index,layero){
+                layer.close(index);
+            },close:function (index) {
+                    layer.close(index);
+                    return false;
+                }*/
+            },function(value,index){
+                //alert(value+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                $.post("profnotPresentProject.jhtml",
+                    {proid:project.id,pfid:data.prof.id,reason:value},function (d) {
+                    if (d.result) {
+                        //刷新
+                        layer.msg("选择成功",{time:300});
+                        table.reload("queryTable",{
+                            url:"searchProfessor.jhtml",
+                            page:false,
+                            where:{
+                                projid:pid
+                            }
+                        });
+                    } else {
+                        layer.alert("更改失败");
+                    }
+                });
+                layer.close(index);
+            });
+        }
+        function del(obj,data){
+            layer.confirm('确定删除选中的工作记录？', {
+                icon : 3,
+                title : '提示信息'
+            }, function(index) {
+                $.getJSON("workhistoryDel.jhtml", {
+                hisid:data.id,id:id
+                }, function(d) {
+                    if (d.msg) {
+                        //location.reload();//不刷新，直接删除tr
+                        $(obj).parents("tr").remove();
+                        layer.close(index);
+                    } else {
+                        layer.alert("删除失败");
+                    }
+                });
+            })
+        }
+        //监听按钮
+        $(document).on('click','#back',function(){
+            xadmin.close();
+        });
+    });
+</script>
+</body>
+</html>

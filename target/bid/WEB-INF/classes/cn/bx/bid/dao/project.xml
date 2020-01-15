@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bx.bid.dao.ProjectDao">
+    <!-- 某个项目已选定的专家 -->
+    <select id="searchProfessorInProjs" resultMap="ProfessorEnroll2">
+        select fro.id as f_id,fro.professorName as f_professorname,
+         r.createDate as r_createDate,r.reason as r_reason,
+         r.isNotice as r_isNotice,r.bePresent as r_bePresent,
+         r.replyTime as r_replyTime,r.msg r_msg
+         from bid_professor fro inner join bid_randomname r on(r.professorid=fro.id)
+        where r.projectid=#{0}
+    </select>
+    <resultMap id="ProfessorEnroll2" type="ProfessorEnroll">
+        <association property="prof" columnPrefix="f_" javaType="Professor">
+            <result property="id" column="id"/>
+            <result property="professorName" column="professorName"/>
+        </association>
+       <association property="rand" columnPrefix="r_" javaType="RandomName">
+            <result column="isNotice" property="isNotice"/>
+            <result column="createdate" property="createdate"/>
+            <result column="bePresent" property="bePresent"/>
+            <result column="replyTime" property="replyTime"/>
+            <result column="reason" property="reason"/>
+            <result column="msg" property="msg"/>
+        </association>
+    </resultMap>
+
+    <!-- 模糊分页查询 -->
+    <select id="search" resultType="Project">
+        <bind name="start" value="(pageNo-1)*pageSize"/>
+        select p.*,d.departmentName from bid_project p inner join bid_department d on(p.departmentId=d.id)
+        <where>
+            <if test="name!= null and name!=''">
+                projectName like concat('%',#{name},'%')
+            </if>
+            <if test="category != null and category != ''">
+                projectCategory like concat('%',#{category},'%')
+            </if>
+        </where>
+        limit #{start},#{pageSize}
+    </select>
+
+    <!--  -->
+    <select id="searchTotal" resultType="int">
+        select count(id) from bid_project
+        <where>
+            <if test="name!=null and name!=''">
+                projectName like concat('%',#{name},'%')
+            </if>
+            <if test="category!=null and category!=''">
+                projectCategory like concat('%',#{category},'%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据id获得项目信息 -->
+    <select id="get" resultType="Project">
+        select * from bid_project where id=#{id}
+    </select>
+
+    <!--  -->
+    <select id="getPrentProfessors" resultType="int">
+       select count(*) from bid_randomname where projectid=#{0} and (bepresent='是' or bepresent!='否')
+    </select>
+
+    <!--  -->
+    <select id="getComingProfessors" resultType="int">
+        select count(*) from bid_randomname where projectid=#{0} and bepresent='是'
+    </select>
+
+    <!--  -->
+    <select id="getProfessorsForChoose" resultType="Professor">
+        select p.id,p.professorname,p.address from bid_professor p
+        where p.id not in(select professorid from bid_randomname where projectid=#{prjid})
+         <if test="category!=null and category!=''">
+             and p.projectcategory like concat('%',#{category},'%')
+         </if>
+    </select>
+
+    <!--  -->
+    <insert id="saveChoose" parameterType="RandomName">
+        insert into bid_randomname(professorId,projectId,status,createDate,reason,isNotice,bePresent,replyTime,msg)
+        values(#{professorid},#{projectid},#{status},#{createdate},#{reason},#{isNotice},#{bePresent},#{replyTime},#{msg})
+    </insert>
+
+    <!-- 参加 -->
+    <update id="profRoleProject" >
+      update bid_randomname set bePresent='是' ,replytime=now() where
+      professorId=#{pfid} and projectId=#{proid}
+    </update>
+
+    <!-- 不参加 -->
+    <update id="profnotPresentProject">
+      update bid_randomname set bePresent='否' ,replytime=now() ,reason=#{reason} where
+      professorId=#{pfid} and projectId=#{projectid}
+    </update>
+
+    <!-- 修改项目状态 -->
+    <update id="updateProjectState">
+        update bid_project set isEvaluated=#{state} where id=#{id}
+    </update>
+
+    <!--  -->
+    <update id="increaseNotPresentNum">
+        update bid_professor set lostNum=lostNum+1 where id=#{0}
+    </update>
+
+    <!-- 修改项目 -->
+    <update id="settleProject">
+        update bid_project set dealCompany=#{dealCompany},settlePrice=#{settlePrice},isEvaluated='5',status=1  where id=#{projid}
+    </update>
+
+    <!-- 获得所有采购部门 -->
+    <select id="departmentNameAll" parameterType="String">
+        select * from bid_department
+    </select>
+
+    <!-- 添加项目 -->
+    <insert id="addProject" parameterType="Project">
+        insert into bid_project(
+        projectName,projectCategory,professorNum,
+        isEvaluated,prochaseMode,departmentId,
+        budget,announceDate,openDate,
+        address,dealDate,url,
+        dealCompany,settlePrice,linkMan,
+        mobliePhone,projectFilePath,createBy,
+        createDate,department,updateBy,
+        updateDate,registerTime,registerAddress,
+        committee,professional,status
+        )values (
+        #{projectName},#{projectCategory}, #{professorNum},
+		#{isEvaluated},#{prochaseMode},#{departmentId},
+		#{budget},#{announceDate},#{openDate},
+		#{address},#{dealDate},#{url},
+		#{dealCompany},#{settlePrice},#{linkMan},
+		#{mobliePhone},#{projectFilePath},#{createBy},
+		#{createDate},#{department},#{updateBy},
+		#{updateDate},#{registerTime},#{registerAddress},
+		#{committee},#{professional},#{status}
+        )
+    </insert>
+
+    <!-- 删除项目 -->
+    <delete id="delProject">
+        delete
+        from bid_project
+        where id = #{id}
+    </delete>
+</mapper>

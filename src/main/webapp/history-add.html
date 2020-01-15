@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="./lib/layui/layui.js"
+            charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <form class="layui-form">
+            <input type="hidden" name="professorid" id="professorid"/>
+            <div class="layui-form-item">
+                <label for="professorName" class="layui-form-label">当前专家</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="professorName" name="professorName"
+                           required="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="startdate" class="layui-form-label">开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="startdate" name="startdate"
+                           lay-verify="startdate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="enddate" class="layui-form-label">结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="enddate" name="enddate"
+                           lay-verify="enddate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="employcompany" class="layui-form-label">公司</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="employcompany" name="employcompany"
+                           lay-verify="employcompany" required autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="job" class="layui-form-label">职务</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="job" name="job"
+                           lay-verify="job" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="jobduty" class="layui-form-label">岗位</label>
+                <div class="layui-input-inline">
+                    <input type="text" required id="jobduty" name="jobduty"
+                           lay-verify="jobduty" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit>增加</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>layui.use(['form', 'laydate', 'layer', 'jquery'],
+    function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        laydate.render({
+            elem: '#startdate',
+            trigger: 'click',
+            format: 'yyyy-MM'
+        });
+        laydate.render({
+            elem: '#enddate',
+            trigger: 'click',
+            format: 'yyyy-MM'
+        });
+        //读取值，并填充
+        var professor = layui.sessionData("professor");
+        $("#professorid").val(professor.data.id);
+        $("#professorName").val(professor.data.professorName);
+
+        //自定义验证规则
+        /*form.verify({
+            name : function(value) {
+                if (value.length < 2||value.length >12) {
+                    return '用户名必须是2-12个字符';
+                }
+            },
+            password : [ /(.+){6,12}$/, '密码必须6到12位' ],
+            repass : function(value) {
+                if ($('#password').val() !=value) {
+                    return '两次密码不一致';
+                }
+            }
+        });*/
+
+        //监听提交
+        form.on('submit(add)',
+            function (data) {
+                console.log(data.field);
+                //发异步，把数据提交给
+                $.post("addHistory.jhtml", data.field, function (res) {
+                    if (res.code === 200) {
+                        parent.layer.alert(res.msg, {icon: 6}, function (index, item) {
+                            xadmin.close();
+                            xadmin.father_reload();
+                        });
+                    } else {
+                        parent.layer.alert(res.msg, {icon: 1});
+                    }
+                });
+                return false;
+            });
+    });
+</script>
+</body>
+</html>
